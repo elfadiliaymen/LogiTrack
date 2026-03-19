@@ -24,6 +24,12 @@ public class CommandeController {
     public Commande ajouterCommande(@RequestBody Commande commande){
         return commandeRepository.save(commande);
     }
+    @PutMapping("/{id}/status")
+     public Commande modifierStatut(@PathVariable Long id , @RequestBody String statut){
+       Commande commande = commandeRepository.findById(id).get();
+       commande.setStatut(statut);
+       return commandeRepository.save(commande);
+    }
 
 
 }
