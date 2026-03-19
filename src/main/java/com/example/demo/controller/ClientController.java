@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Client;
-import com.example.demo.repository.ClientRepository;
 import com.example.demo.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,31 +12,26 @@ import java.util.List;
 public class ClientController {
 
     @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
     private ClientService clientService;
 
     @GetMapping
-    public List<Client> listerClients(){
-        return clientService.lire();
+    public List<Client> listerClients() {
+        return clientService.listerTout();
     }
 
     @PostMapping
-    public Client ajouterClient(@RequestBody Client client){
+    public Client ajouterClient(@RequestBody Client client) {
         return clientService.creer(client);
     }
 
-
-    @DeleteMapping
-    public String supprimerClient(@PathVariable Long id){
-     return clientService.supprimer(id);
-    }
-
     @GetMapping("/{id}")
-    public Client consulterClient(@PathVariable Long id){
-        return clientRepository.findById(id).orElse(null);
+    public Client consulterClient(@PathVariable Long id) {
+        return clientService.consulter(id);
     }
 
-
+    @DeleteMapping("/{id}")
+    public String supprimerClient(@PathVariable Long id) {
+        clientService.supprimer(id);
+        return "Client supprimé avec succès !";
+    }
 }

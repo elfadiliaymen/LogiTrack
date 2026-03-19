@@ -26,8 +26,6 @@ public class Commande {
 
     public Commande() {
     }
-
-
     public Commande(Long id, LocalDate dateCommande, String statut, Client client, List<LigneCommande> ligneCommandes) {
         this.id = id;
         this.dateCommande = dateCommande;

@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Client;
-import com.example.demo.model.Produit;
 import com.example.demo.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,17 +13,19 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    public List<Client> lire(){
+    public List<Client> listerTout() {
         return clientRepository.findAll();
     }
 
-    public Client creer(Client client){
+    public Client consulter(Long id) {
+        return clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Client non trouvé"));
+    }
+
+    public Client creer(Client client) {
         return clientRepository.save(client);
     }
 
-
-    public String supprimer(Long id){
+    public void supprimer(Long id) {
         clientRepository.deleteById(id);
-        return "Client supprimer !";
     }
 }

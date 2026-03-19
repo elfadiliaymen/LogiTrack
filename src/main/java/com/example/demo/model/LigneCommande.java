@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class LigneCommande {
     private int quantite;
     @ManyToOne
     @JoinColumn(name = "commande_id")
+    @JsonIgnore
     private Commande commande;
 
     @ManyToOne
