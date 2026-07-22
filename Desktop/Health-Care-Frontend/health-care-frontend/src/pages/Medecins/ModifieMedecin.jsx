@@ -10,9 +10,9 @@ const schema = yup.object({
     .string()
     .required("Le nom est obligatoire"),
 
-  prenom: yup
+  specialite: yup
     .string()
-    .required("Le prénom est obligatoire"),
+    .required("La spécialité est obligatoire"),
 
   email: yup
     .string()
@@ -23,15 +23,11 @@ const schema = yup.object({
     .string()
     .required("Le téléphone est obligatoire")
     .matches(/^[0-9]+$/, "Le téléphone doit contenir uniquement des chiffres"),
-
-  dateNaissance: yup
-    .string()
-    .required("La date de naissance est obligatoire"),
 });
 
-function ModifiePatient() {
+function ModifieMedecin() {
 
-  const { patientId } = useParams();
+  const { medecinId } = useParams();
 
   const role = localStorage.getItem("role");
 
@@ -44,10 +40,9 @@ function ModifiePatient() {
     resolver: yupResolver(schema),
     defaultValues: {
       nom: "",
-      prenom: "",
+      specialite: "",
       email: "",
       telephone: "",
-      dateNaissance: "",
     },
   });
 
@@ -56,51 +51,77 @@ function ModifiePatient() {
     if (role === "ADMIN") {
 
       api
-        .get(`/patient/${patientId}/consulter`)
+        .get(`/medecin/${medecinId}/consulter`)
         .then((res) => {
-          reset(res.data);
+
+          reset({
+            nom: res.data.nom,
+            specialite: res.data.specialite,
+            email: res.data.email,
+            telephone: res.data.telephone,
+          });
+
         })
         .catch((err) => {
+
           console.log(err);
+
         });
 
     } else {
 
       api
-        .get("/patient/me")
+        .get("/medecin/me")
         .then((res) => {
-          reset(res.data);
+
+          reset({
+            nom: res.data.nom,
+            specialite: res.data.specialite,
+            email: res.data.email,
+            telephone: res.data.telephone,
+          });
+
         })
         .catch((err) => {
+
           console.log(err);
+
         });
 
     }
 
-  }, [patientId, role, reset]);
+  }, [medecinId, role, reset]);
 
   function onSubmit(data) {
 
     if (role === "ADMIN") {
 
       api
-        .put(`/patient/${patientId}`, data)
+        .put(`/medecin/${medecinId}`, data)
         .then(() => {
-          alert("Patient modifié avec succès !");
+
+          alert("Médecin modifié avec succès !");
+
         })
         .catch((err) => {
+
           console.log(err);
+
         });
 
     } else {
 
       api
-        .put("/patient/me", data)
+        .put("/medecin/me", data)
         .then(() => {
+
           alert("Profil modifié avec succès !");
+
         })
         .catch((err) => {
+
           console.log(err);
+
         });
 
     }
@@ -111,38 +132,68 @@ function ModifiePatient() {
 
     <div className="page">
 
-      <h1>Modifier un Patient</h1>
+      <h1>Modifier un Médecin</h1>
 
       <form className="form" onSubmit={handleSubmit(onSubmit)}>
 
         <div className="form-group">
+
           <label>Nom</label>
-          <input type="text" {...register("nom")} />
-          <p className="error">{errors.nom?.message}</p>
+
+          <input
+            type="text"
+            {...register("nom")}
+          />
+
+          <p className="error">
+            {errors.nom?.message}
+          </p>
+
         </div>
 
         <div className="form-group">
-          <label>Prénom</label>
-          <input type="text" {...register("prenom")} />
-          <p className="error">{errors.prenom?.message}</p>
+
+          <label>Spécialité</label>
+
+          <input
+            type="text"
+            {...register("specialite")}
+          />
+
+          <p className="error">
+            {errors.specialite?.message}
+          </p>
+
         </div>
 
         <div className="form-group">
+
           <label>Email</label>
-          <input type="email" {...register("email")} />
-          <p className="error">{errors.email?.message}</p>
+
+          <input
+            type="email"
+            {...register("email")}
+          />
+
+          <p className="error">
+            {errors.email?.message}
+          </p>
+
         </div>
 
         <div className="form-group">
+
           <label>Téléphone</label>
-          <input type="text" {...register("telephone")} />
-          <p className="error">{errors.telephone?.message}</p>
-        </div>
 
-        <div className="form-group">
-          <label>Date de naissance</label>
-          <input type="date" {...register("dateNaissance")} />
-          <p className="error">{errors.dateNaissance?.message}</p>
+          <input
+            type="text"
+            {...register("telephone")}
+          />
+
+          <p className="error">
+            {errors.telephone?.message}
+          </p>
+
         </div>
 
         <button
@@ -157,6 +208,7 @@ function ModifiePatient() {
     </div>
 
   );
+
 }
 
-export default ModifiePatient;
+export default ModifieMedecin;

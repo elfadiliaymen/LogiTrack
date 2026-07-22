@@ -1,42 +1,75 @@
-import { useState } from "react";
 import api from "../../api/api";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup.object({
+  nom: yup
+    .string()
+    .required("Le nom est obligatoire"),
+
+  specialite: yup
+    .string()
+    .required("La spécialité est obligatoire"),
+
+  email: yup
+    .string()
+    .email("Email invalide")
+    .required("L'email est obligatoire"),
+
+  username: yup
+    .string()
+    .required("Le username est obligatoire")
+    .min(4, "Minimum 4 caractères"),
+
+  password: yup
+    .string()
+    .required("Le mot de passe est obligatoire")
+    .min(6, "Minimum 6 caractères"),
+
+  role: yup
+    .string()
+    .required(),
+
+  telephone: yup
+    .string()
+    .required("Le téléphone est obligatoire")
+    .matches(/^[0-9]+$/, "Le téléphone doit contenir uniquement des chiffres")
+    .min(10, "Numéro invalide"),
+});
 
 function AddMedecin() {
 
-  const [newMedecin, setNewMedecin] = useState({
-    nom: "",
-    specialite: "",
-    email: "",
-    username: "",
-    password: "",
-    role: "MEDECIN",
-    telephone: ""
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      nom: "",
+      specialite: "",
+      email: "",
+      username: "",
+      password: "",
+      role: "MEDECIN",
+      telephone: "",
+    },
   });
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-
-    setNewMedecin({
-      ...newMedecin,
-      [name]: value
-    });
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    api.post("/medecin", newMedecin)
+  function onSubmit(data) {
+    api.post("/medecin", data)
       .then((res) => {
         console.log(res.data);
-
-        setNewMedecin({
+        reset({
           nom: "",
           specialite: "",
           email: "",
           username: "",
           password: "",
           role: "MEDECIN",
-          telephone: ""
+          telephone: "",
         });
       })
       .catch((err) => {
@@ -44,71 +77,79 @@ function AddMedecin() {
       });
   }
 
-  return (
-    <form onSubmit={handleSubmit}>
+ return (
 
-      <label>Nom</label>
-      <input
-        type="text"
-        name="nom"
-        value={newMedecin.nom}
-        onChange={handleChange}
-      />
+<div className="page">
 
-      <label>Spécialité</label>
-      <input
-        type="text"
-        name="specialite"
-        value={newMedecin.specialite}
-        onChange={handleChange}
-      />
+    <div className="form-card">
 
-      <label>Email</label>
-      <input
-        type="email"
-        name="email"
-        value={newMedecin.email}
-        onChange={handleChange}
-      />
+        <h1>Ajouter un Médecin</h1>
 
-      <label>Username</label>
-      <input
-        type="text"
-        name="username"
-        value={newMedecin.username}
-        onChange={handleChange}
-      />
+        <form
+            className="form"
+            onSubmit={handleSubmit(onSubmit)}
+        >
 
-      <label>Password</label>
-      <input
-        type="password"
-        name="password"
-        value={newMedecin.password}
-        onChange={handleChange}
-      />
+            <div className="form-group">
+                <label>Nom</label>
+                <input type="text" {...register("nom")} />
+                <p className="error">{errors.nom?.message}</p>
+            </div>
 
-      <label>Role</label>
-      <input
-        type="text"
-        name="role"
-        value={newMedecin.role}
-        onChange={handleChange}
-      />
+            <div className="form-group">
+                <label>Spécialité</label>
+                <input type="text" {...register("specialite")} />
+                <p className="error">{errors.specialite?.message}</p>
+            </div>
 
-      <label>Téléphone</label>
-      <input
-        type="text"
-        name="telephone"
-        value={newMedecin.telephone}
-        onChange={handleChange}
-      />
+            <div className="form-group">
+                <label>Email</label>
+                <input type="email" {...register("email")} />
+                <p className="error">{errors.email?.message}</p>
+            </div>
 
-      <button type="submit">
-        Ajouter
-      </button>
+            <div className="form-group">
+                <label>Username</label>
+                <input type="text" {...register("username")} />
+                <p className="error">{errors.username?.message}</p>
+            </div>
 
-    </form>
-  );
+            <div className="form-group">
+                <label>Mot de passe</label>
+                <input type="password" {...register("password")} />
+                <p className="error">{errors.password?.message}</p>
+            </div>
+
+            <div className="form-group">
+                <label>Rôle</label>
+                <input
+                    type="text"
+                    value="MEDECIN"
+                    readOnly
+                    {...register("role")}
+                />
+            </div>
+
+            <div className="form-group">
+                <label>Téléphone</label>
+                <input type="text" {...register("telephone")} />
+                <p className="error">{errors.telephone?.message}</p>
+            </div>
+
+            <button
+                className="btn-primary"
+                type="submit"
+            >
+                Ajouter
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+);
 }
 
 export default AddMedecin;

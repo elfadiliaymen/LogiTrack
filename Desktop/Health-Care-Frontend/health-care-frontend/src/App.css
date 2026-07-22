@@ -1,0 +1,810 @@
+/* ======================================================
+   RESET
+====================================================== */
+
+
+@font-face {
+    font-family: "ArianeCoachella-Regular";
+    src: url("./assets/fonts/ArianeCoachella-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: "Rundeck";
+    src: url("./assets/fonts/Rundeck.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+.logo h1{
+
+    font-family:"Rundeck", serif;
+
+    color:#337ab7;
+
+    font-size:38px;
+
+    font-weight:normal;
+
+    letter-spacing:1px;
+
+    margin-bottom:3px;
+}
+
+
+
+body{
+    font-family:"ArianeCoachella-Regular", Arial, sans-serif;
+    background:#ffffff;
+    color:#333;
+}
+
+a{
+    text-decoration:none;
+    color:#337ab7;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+ul{
+    list-style:none;
+}
+
+button,
+input,
+textarea,
+select{
+    font-family:inherit;
+    font-size:15px;
+}
+
+/* ======================================================
+   APP
+====================================================== */
+
+.app{
+    min-height:100vh;
+
+    display:grid;
+
+    grid-template-rows:70px 1fr 60px;
+}
+
+/* ======================================================
+   PAGE
+====================================================== */
+
+.page{
+
+    width:90%;
+
+    max-width:1200px;
+
+    margin:30px auto;
+}
+
+.page h1{
+
+    text-align:center;
+
+    margin-bottom:30px;
+
+    font-size:32px;
+
+    color:#333;
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 35px;
+
+    background:#ffffff;
+
+    border-bottom:1px solid #ddd;
+    height: 100px;
+}
+
+.logo{
+
+    display:flex;
+
+    flex-direction:column;
+}
+
+.logo h2{
+
+    color:#337ab7;
+
+    font-size:28px;
+
+    margin-bottom:3px;
+}
+
+.logo span{
+
+    color:#777;
+
+    font-size:13px;
+}
+
+.header-nav{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
+}
+
+.header-nav a{
+
+    color:#337ab7;
+
+    font-weight:bold;
+}
+
+/* ======================================================
+   DASHBOARD
+====================================================== */
+
+.dashboard{
+
+    width:90%;
+
+    max-width:1200px;
+
+    margin:40px auto;
+}
+
+.dashboard-header{
+
+    text-align:center;
+
+    margin-bottom:40px;
+}
+
+.dashboard-header h1{
+
+    font-size:34px;
+
+    margin-bottom:15px;
+}
+
+.dashboard-header p{
+
+    color:#666;
+}
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+    gap:20px;
+}
+
+.dashboard-card{
+
+    border:1px solid #ddd;
+
+    background:#fff;
+
+    padding:25px;
+}
+
+.dashboard-card h2{
+
+    color:#337ab7;
+
+    margin-bottom:15px;
+
+    font-size:22px;
+}
+
+.dashboard-card p{
+
+    color:#666;
+
+    line-height:1.6;
+
+    margin-bottom:20px;
+}
+
+.dashboard-card:hover{
+
+    background:#f7f7f7;
+}
+
+/* ======================================================
+   ACTION PAGES
+====================================================== */
+
+.cards-actions{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+    gap:20px;
+}
+
+.action-card{
+
+    border:1px solid #ddd;
+
+    background:#fff;
+
+    padding:25px;
+}
+
+.action-card h2{
+
+    color:#337ab7;
+
+    margin-bottom:15px;
+}
+
+.action-card p{
+
+    color:#666;
+}
+
+.action-card:hover{
+
+    background:#f7f7f7;
+}
+
+/* ======================================================
+   FOOTER
+====================================================== */
+
+.footer{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#fff;
+
+    border-top:1px solid #ddd;
+
+    color:#666;
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media(max-width:768px){
+
+.header{
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    gap:10px;
+
+    padding:15px;
+
+    height:auto;
+}
+
+.header-nav{
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+}
+
+.dashboard-grid{
+
+    grid-template-columns:1fr;
+}
+
+.cards-actions{
+
+    grid-template-columns:1fr;
+}
+
+.page{
+
+    width:95%;
+}
+
+}
+
+/* ======================================================
+   FORM
+====================================================== */
+
+.form-card{
+
+    width:700px;
+
+    margin:0 auto;
+
+    border:1px solid #ddd;
+
+    background:#fff;
+
+    padding:30px;
+}
+
+.form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+    
+    justify-content: center;
+}
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+    
+}
+
+.form-group label{
+
+    font-weight:bold;
+
+    color:#333;
+   
+}
+
+.form input,
+.form textarea,
+.form select{
+
+    width:100%;
+
+    padding:10px 12px;
+
+    border:1px solid #ccc;
+
+    background:#fff;
+
+    color:#333;
+
+    outline:none;
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus{
+
+    border-color:#66afe9;
+}
+
+.form textarea{
+
+    min-height:120px;
+
+    resize:vertical;
+}
+
+.form input[readonly]{
+
+    background:#eeeeee;
+}
+
+.error{
+
+    color:#d9534f;
+
+    font-size:13px;
+}
+
+/* ======================================================
+   BUTTONS
+====================================================== */
+
+.btn-primary{
+
+    width:170px;
+
+    padding:10px 20px;
+
+    margin:15px auto 0;
+
+    border:1px solid #2e6da4;
+
+    background:#337ab7;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+.btn-primary:hover{
+
+    background:#286090;
+}
+
+.btn-view{
+
+    padding:6px 12px;
+
+    border:1px solid #2e6da4;
+
+    background:#337ab7;
+
+    color:white;
+}
+
+.btn-view:hover{
+
+    background:#286090;
+}
+
+.btn-edit{
+
+    padding:6px 12px;
+
+    border:1px solid #eea236;
+
+    background:#f0ad4e;
+
+    color:white;
+}
+
+.btn-edit:hover{
+
+    background:#ec971f;
+}
+
+.btn-delete{
+
+    padding:6px 12px;
+
+    border:1px solid #d43f3a;
+
+    background:#d9534f;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+.btn-delete:hover{
+
+    background:#c9302c;
+}
+
+
+/* ======================================================
+   TABLE
+====================================================== */
+
+.table-container{
+
+    width:100%;
+
+    overflow-x:auto;
+}
+
+.table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:#fff;
+}
+
+.table caption{
+
+    padding:12px;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    color:#555;
+}
+
+.table thead{
+
+    background:#fff;
+}
+
+.table thead th{
+
+    padding:14px;
+
+    border:1px solid #ddd;
+
+    text-align:left;
+
+    color:#333;
+
+    font-weight:bold;
+}
+
+.table tbody td{
+
+    padding:14px;
+
+    border:1px solid #ddd;
+
+    color:#555;
+}
+
+.table tbody tr{
+
+    transition:.15s;
+}
+
+.table tbody tr:hover{
+
+    background:#5bc0de;
+}
+
+.table tbody tr:hover td{
+
+    color:white;
+}
+
+.table tbody tr:hover a{
+
+    color:white;
+}
+
+.table tbody tr:hover button{
+
+    color:white;
+}
+
+.table-actions{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+}
+
+a,
+a:link,
+a:visited,
+a:hover,
+a:active{
+    text-decoration: none;
+    color: inherit;
+}
+
+/*======================================================
+PATIENT SHEET
+======================================================*/
+
+.patient-sheet{
+
+    width:850px;
+
+    margin:auto;
+
+    border:1px solid #ddd;
+
+    background:white;
+}
+
+.sheet-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:25px;
+
+    border-bottom:1px solid #ddd;
+}
+
+.sheet-header h1{
+
+    margin-bottom:5px;
+
+    color:#337ab7;
+}
+
+.sheet-header p{
+
+    color:#777;
+}
+
+.patient-profile{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
+
+    padding:30px;
+
+    border-bottom:1px solid #ddd;
+}
+
+.patient-avatar{
+
+    width:90px;
+
+    height:90px;
+
+    border:1px solid #ddd;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:28px;
+
+    color:#337ab7;
+
+    font-weight:bold;
+
+    background:#f8f8f8;
+}
+
+.patient-profile h2{
+
+    margin-bottom:8px;
+
+    color:#333;
+}
+
+.patient-profile p{
+
+    color:#666;
+}
+
+.patient-infos{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+}
+
+.info-box{
+
+    padding:22px;
+
+    border-right:1px solid #ddd;
+
+    border-bottom:1px solid #ddd;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+}
+
+.info-box:nth-child(even){
+
+    border-right:none;
+}
+
+.info-box span{
+
+    color:#888;
+
+    font-size:14px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+}
+
+.info-box strong{
+
+    font-size:18px;
+
+    color:#333;
+
+    font-weight:600;
+}
+
+@media(max-width:768px){
+
+.patient-sheet{
+
+    width:100%;
+}
+
+.patient-profile{
+
+    flex-direction:column;
+
+    text-align:center;
+}
+
+.patient-infos{
+
+    grid-template-columns:1fr;
+}
+
+.info-box{
+
+    border-right:none;
+}
+
+}
+
+/*======================================================
+DOSSIER
+======================================================*/
+
+.info-box strong{
+
+    word-break: break-word;
+}
+
+.info-box:last-child{
+
+    border-bottom:none;
+}
+
+.info-box:nth-last-child(2){
+
+    border-bottom:none;
+}
+
+/*======================================================
+RENDEZ-VOUS STATUS
+======================================================*/
+
+.status-planifie{
+    color:#337ab7;
+    font-weight:bold;
+}
+
+.status-termine{
+    color:#5cb85c;
+    font-weight:bold;
+}
+
+.status-annule{
+    color:#d9534f;
+    font-weight:bold;
+}

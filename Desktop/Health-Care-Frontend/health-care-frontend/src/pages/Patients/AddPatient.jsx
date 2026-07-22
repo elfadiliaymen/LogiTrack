@@ -1,63 +1,160 @@
-import { useState } from "react";
 import api from "../../api/api";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
+const schema = yup.object({
 
-function AddPatient(){
+  nom: yup
+    .string()
+    .required("Le nom est obligatoire"),
 
-    const [newPatient , setNewPatient] = useState({
-  "nom": "",
-  "prenom": "",
-  "email": "",
-  "username": "",
-  "password": "",
-  "telephone": "",
-  "dateNaissance": ""
-})
+  prenom: yup
+    .string()
+    .required("Le prénom est obligatoire"),
 
-function handleSubmit(e){
-e.preventDefault();
+  email: yup
+    .string()
+    .email("Email invalide")
+    .required("L'email est obligatoire"),
 
-  api.post("/patient" , newPatient).then(res => {
-        console.log(res.data)
-        setNewPatient({
-  "nom": "",
-  "prenom": "",
-  "email": "",
-  "username": "",
-  "password": "",
-  "telephone": "",
-  "dateNaissance": ""
+  username: yup
+    .string()
+    .min(3, "Le username doit contenir au moins 3 caractères")
+    .required("Le username est obligatoire"),
 
-    }).catch(err => {
+  password: yup
+    .string()
+    .min(6, "Le mot de passe doit contenir au moins 6 caractères")
+    .required("Le mot de passe est obligatoire"),
+
+  telephone: yup
+    .string()
+    .required("Le téléphone est obligatoire"),
+
+  dateNaissance: yup
+    .date()
+    .required("La date de naissance est obligatoire")
+
+});
+
+function AddPatient() {
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm({
+    resolver: yupResolver(schema)
+  });
+
+  function onSubmit(data) {
+
+    api.post("/patient", data)
+      .then((res) => {
+        console.log(res.data);
+
+        alert("Patient ajouté avec succès !");
+
+        reset();
+      })
+      .catch((err) => {
         console.log(err);
-    });
-})
+      });
 
+  }
 
+ return (
 
-}
-    return(
-        <>
-        <form onSubmit={handleSubmit}>
-               nom :
-            <input type="text" name="nom" id="" value={newPatient.nom} onChange={(e) => {setNewPatient({...newPatient , nom : e.target.value})}} />
-            prenom :
-            <input type="text" name="prenom" id="" value={newPatient.prenom} onChange={(e) => {setNewPatient({...newPatient , prenom : e.target.value})}} />
+<div className="page">
 
-            email :
-            <input type="email" name="email" id="" value={newPatient.email} onChange={(e) => {setNewPatient({...newPatient , email : e.target.value})} }/>
-             password :
-            <input type="password" name="password" id="" value={newPatient.password} onChange={(e) => {setNewPatient({...newPatient , password : e.target.value})} }/>
-            username :  
-            <input type="text" name="username" id="" value={newPatient.username} onChange={(e) => {setNewPatient({...newPatient , username : e.target.value})}}/>
-            telephone : 
-            <input type="number" name="telephone" id="" value={newPatient.telephone} onChange={(e) => {setNewPatient({...newPatient , telephone : e.target.value})} }/>
-             datedenaissance : 
-            <input type="date" name="dateNaissance" id="" value={newPatient.dateNaissance} onChange={(e) => {setNewPatient({...newPatient , dateNaissance : e.target.value})}}/>
-            <button type="submit">add</button>
+    <div className="form-card">
+
+        <h1>Ajouter un Patient</h1>
+
+        <form
+            className="form"
+            onSubmit={handleSubmit(onSubmit)}
+        >
+
+            <div className="form-group">
+                <label>Nom</label>
+                <input
+                    type="text"
+                    {...register("nom")}
+                />
+                <p className="error">{errors.nom?.message}</p>
+            </div>
+
+            <div className="form-group">
+                <label>Prénom</label>
+                <input
+                    type="text"
+                    {...register("prenom")}
+                />
+                <p className="error">{errors.prenom?.message}</p>
+            </div>
+
+            <div className="form-group">
+                <label>Email</label>
+                <input
+                    type="email"
+                    {...register("email")}
+                />
+                <p className="error">{errors.email?.message}</p>
+            </div>
+
+            <div className="form-group">
+                <label>Username</label>
+                <input
+                    type="text"
+                    {...register("username")}
+                />
+                <p className="error">{errors.username?.message}</p>
+            </div>
+
+            <div className="form-group">
+                <label>Mot de passe</label>
+                <input
+                    type="password"
+                    {...register("password")}
+                />
+                <p className="error">{errors.password?.message}</p>
+            </div>
+
+            <div className="form-group">
+                <label>Téléphone</label>
+                <input
+                    type="text"
+                    {...register("telephone")}
+                />
+                <p className="error">{errors.telephone?.message}</p>
+            </div>
+
+            <div className="form-group">
+                <label>Date de naissance</label>
+                <input
+                    type="date"
+                    {...register("dateNaissance")}
+                />
+                <p className="error">{errors.dateNaissance?.message}</p>
+            </div>
+
+            <button
+                className="btn-primary"
+                type="submit"
+            >
+                Ajouter
+            </button>
+
         </form>
-        </>
-    )
+
+    </div>
+
+</div>
+
+);
 }
 
 export default AddPatient;

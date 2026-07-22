@@ -1,87 +1,156 @@
-import { useState } from "react";
 import api from "../../api/api";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup.object({
+  dateRendezVous: yup
+    .string()
+    .required("La date du rendez-vous est obligatoire"),
+
+  statut: yup
+    .string()
+    .required("Le statut est obligatoire"),
+
+  patientId: yup
+    .number()
+    .typeError("L'ID du patient doit être un nombre")
+    .positive("L'ID doit être positif")
+    .integer("L'ID doit être un entier")
+    .required("L'ID du patient est obligatoire"),
+
+  medecinId: yup
+    .number()
+    .typeError("L'ID du médecin doit être un nombre")
+    .positive("L'ID doit être positif")
+    .integer("L'ID doit être un entier")
+    .required("L'ID du médecin est obligatoire"),
+});
 
 function AddRendezVous() {
 
-  const [newRendezVous, setNewRendezVous] = useState({
-    dateRendezVous: "",
-    statut: "",
-    patientId: "",
-    medecinId: ""
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
   });
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-
-    setNewRendezVous({
-      ...newRendezVous,
-      [name]: value
-    });
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    api.post("/RendezVous", newRendezVous)
+  function onSubmit(data) {
+    api.post("/RendezVous", data)
       .then((res) => {
         console.log(res.data);
-
-        setNewRendezVous({
-          dateRendezVous: "",
-          statut: "",
-          patientId: "",
-          medecinId: ""
-        });
+        reset();
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  return (
-    <form onSubmit={handleSubmit}>
+ return (
 
-      <label>Date du rendez-vous</label>
-      <input
-        type="datetime-local"
-        name="dateRendezVous"
-        value={newRendezVous.dateRendezVous}
-        onChange={handleChange}
-      />
+<div className="page">
 
-     <label>Statut</label>
-<select
-  name="statut"
-  value={newRendezVous.statut}
-  onChange={handleChange}
->
-  <option value="">-- Choisir un statut --</option>
-  <option value="PLANIFIE">Planifié</option>
-  <option value="CONFIRME">Confirmé</option>
-</select>
+    <div className="form-card">
 
-      <label>Patient ID</label>
-      <input
-        type="number"
-        name="patientId"
-        value={newRendezVous.patientId}
-        onChange={handleChange}
-      />
+        <h1>Ajouter un Rendez-vous</h1>
 
-      <label>Médecin ID</label>
-      <input
-        type="number"
-        name="medecinId"
-        value={newRendezVous.medecinId}
-        onChange={handleChange}
-      />
+        <form
+            className="form"
+            onSubmit={handleSubmit(onSubmit)}
+        >
 
-      <button type="submit">
-        Ajouter
-      </button>
+            <div className="form-group">
 
-    </form>
-  );
+                <label>Date du rendez-vous</label>
+
+                <input
+                    type="datetime-local"
+                    {...register("dateRendezVous")}
+                />
+
+                <p className="error">
+                    {errors.dateRendezVous?.message}
+                </p>
+
+            </div>
+
+            <div className="form-group">
+
+                <label>Statut</label>
+
+                <select {...register("statut")}>
+
+                    <option value="">
+                        Choisir un statut
+                    </option>
+
+                    <option value="PLANIFIE">
+                        Planifié
+                    </option>
+
+                    <option value="TERMINE">
+                        Terminé
+                    </option>
+
+                    <option value="ANNULE">
+                        Annulé
+                    </option>
+
+                </select>
+
+                <p className="error">
+                    {errors.statut?.message}
+                </p>
+
+            </div>
+
+            <div className="form-group">
+
+                <label>Patient ID</label>
+
+                <input
+                    type="number"
+                    {...register("patientId")}
+                />
+
+                <p className="error">
+                    {errors.patientId?.message}
+                </p>
+
+            </div>
+
+            <div className="form-group">
+
+                <label>Médecin ID</label>
+
+                <input
+                    type="number"
+                    {...register("medecinId")}
+                />
+
+                <p className="error">
+                    {errors.medecinId?.message}
+                </p>
+
+            </div>
+
+            <button
+                className="btn-primary"
+                type="submit"
+            >
+                Ajouter
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+);
 }
 
 export default AddRendezVous;
