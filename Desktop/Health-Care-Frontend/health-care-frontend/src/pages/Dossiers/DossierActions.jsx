@@ -1,62 +1,44 @@
-import { Link } from "react-router-dom";
+ import { Link } from "react-router-dom";
 
-function DossierActions() {
 
-    const role = localStorage.getItem("role");
+function DossierActions(){
+return (
 
-    return (
+<div className="page">
 
-        <div className="page">
+    <h1>Gestion des Dossiers Médicaux</h1>
 
-            <h1>
-                {role === "ADMIN"
-                    ? "Gestion des Dossiers Médicaux"
-                    : "Mes Dossiers Médicaux"}
-            </h1>
+    <div className="cards-actions">
 
-            <div className="cards-actions">
+        <Link
+            className="action-card"
+            to="/dossiers"
+        >
+            <h2>Liste des Dossiers</h2>
 
-                <Link
-                    className="action-card"
-                    to="/dossiers"
-                >
+            <p>
+                Consulter tous les dossiers médicaux.
+            </p>
 
-                    <h2>
-                        {role === "ADMIN"
-                            ? "Liste des Dossiers"
-                            : "Mes Dossiers"}
-                    </h2>
+        </Link>
 
-                    <p>
-                        {role === "ADMIN"
-                            ? "Consulter tous les dossiers médicaux."
-                            : "Consulter vos dossiers médicaux."}
-                    </p>
+        <Link
+            className="action-card"
+            to="/add-dossier"
+        >
+            <h2>Ajouter un Dossier</h2>
 
-                </Link>
+            <p>
+                Créer un nouveau dossier médical.
+            </p>
 
-                {role === "ADMIN" && (
+        </Link>
 
-                    <Link
-                        className="action-card"
-                        to="/add-dossier"
-                    >
+    </div>
 
-                        <h2>Ajouter un Dossier</h2>
+</div>
 
-                        <p>
-                            Créer un nouveau dossier médical.
-                        </p>
-
-                    </Link>
-
-                )}
-
-            </div>
-
-        </div>
-
-    );
+);
 
 }
 

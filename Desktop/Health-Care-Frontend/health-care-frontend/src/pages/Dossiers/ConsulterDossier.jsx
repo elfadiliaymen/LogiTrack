@@ -1,28 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import api from "../../api/api";
 
 function ConsulterDossier() {
 
-    const [dossier, setDossier] = useState(null);
+    const { dossierId } = useParams();
 
-    const role = localStorage.getItem("role");
+    const [dossier, setDossier] = useState(null);
 
     useEffect(() => {
 
-        if (role === "ADMIN") {
-            return;
-        }
+        api.get(`/DossierMedical/${dossierId}/consulter`)
+            .then((res) => setDossier(res.data))
+            .catch((err) => console.log(err));
 
-        api.get("/DossierMedical/me")
-            .then((res) => {
-                setDossier(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-
-    }, [role]);
+    }, [dossierId]);
 
     if (!dossier) {
         return (
@@ -42,20 +34,27 @@ function ConsulterDossier() {
 
                     <div>
 
-                        <h1>Mon Dossier Médical</h1>
+                        <h1>Dossier Médical</h1>
+
+                        <p>
+                            Informations du dossier médical
+                        </p>
 
                     </div>
 
                     <Link
-                        className="btn-edit"
                         to={`/update-dossier/${dossier.id}`}
+                        className="btn-edit"
                     >
                         Modifier
                     </Link>
 
                 </div>
 
+
                 <div className="patient-profile">
+
+                    
 
                     <div>
 
@@ -64,50 +63,65 @@ function ConsulterDossier() {
                         </h2>
 
                         <p>
-                            Créé le {dossier.dateCreation}
+                            Patient #{dossier.patientId}
                         </p>
 
                     </div>
 
                 </div>
 
+
                 <div className="patient-infos">
 
                     <div className="info-box">
 
-                        <span>ID</span>
+                        <span>ID du dossier</span>
 
-                        <strong>{dossier.id}</strong>
-
-                    </div>
-
-                    <div className="info-box">
-
-                        <span>Diagnostic</span>
-
-                        <strong>{dossier.diagnostic}</strong>
+                        <strong>
+                            {dossier.id}
+                        </strong>
 
                     </div>
+
 
                     <div className="info-box">
 
                         <span>Patient</span>
 
-                        <strong>{dossier.patientId}</strong>
+                        <strong>
+                            #{dossier.patientId}
+                        </strong>
 
                     </div>
+
 
                     <div className="info-box">
 
                         <span>Date de création</span>
 
-                        <strong>{dossier.dateCreation}</strong>
+                        <strong>
+                            {dossier.dateCreation}
+                        </strong>
 
                     </div>
 
+
+                    <div className="info-box">
+
+                        <span>Diagnostic</span>
+
+                        <strong>
+                            {dossier.diagnostic}
+                        </strong>
+
+                    </div>
+
+
                     <div
                         className="info-box"
-                        style={{ gridColumn: "1 / span 2" }}
+                        style={{
+                            gridColumn: "1 / span 2"
+                        }}
                     >
 
                         <span>Observations</span>

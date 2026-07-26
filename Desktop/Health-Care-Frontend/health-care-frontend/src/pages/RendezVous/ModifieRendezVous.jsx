@@ -1,5 +1,5 @@
-import api from "../../api/api";
 import { useEffect } from "react";
+import api from "../../api/api";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -8,18 +8,30 @@ import { useParams } from "react-router-dom";
 const schema = yup.object({
   dateRendezVous: yup
     .string()
-    .required("La date est obligatoire"),
+    .required("La date du rendez-vous est obligatoire"),
 
   statut: yup
     .string()
     .required("Le statut est obligatoire"),
+
+  patientId: yup
+    .number()
+    .typeError("L'ID du patient doit être un nombre")
+    .positive("L'ID doit être positif")
+    .integer("L'ID doit être un entier")
+    .required("L'ID du patient est obligatoire"),
+
+  medecinId: yup
+    .number()
+    .typeError("L'ID du médecin doit être un nombre")
+    .positive("L'ID doit être positif")
+    .integer("L'ID doit être un entier")
+    .required("L'ID du médecin est obligatoire"),
 });
 
 function ModifieRendezVous() {
 
   const { rendezVousId } = useParams();
-
-  const role = localStorage.getItem("role");
 
   const {
     register,
@@ -28,129 +40,108 @@ function ModifieRendezVous() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      dateRendezVous: "",
-      statut: "",
-    },
   });
 
+  function getRendezVous() {
+
+    api.get(`/RendezVous/${rendezVousId}/consulter`)
+      .then((res) => {
+        reset({
+          dateRendezVous: res.data.dateRendezVous?.slice(0, 16),
+          statut: res.data.statut,
+          patientId: res.data.patientId,
+          medecinId: res.data.medecinId,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   useEffect(() => {
-
-    if (role === "ADMIN") {
-
-      api
-        .get(`/RendezVous/${rendezVousId}/consulter`)
-        .then((res) => {
-          reset({
-            dateRendezVous: res.data.dateRendezVous,
-            statut: res.data.statut,
-          });
-        })
-        .catch((err) => console.log(err));
-
-    } else {
-
-      api
-        .get("/RendezVous/me")
-        .then((res) => {
-          reset({
-            dateRendezVous: res.data.dateRendezVous,
-            statut: res.data.statut,
-          });
-        })
-        .catch((err) => console.log(err));
-
+    if (rendezVousId) {
+      getRendezVous();
     }
-
-  }, [rendezVousId, role, reset]);
+  }, [rendezVousId]);
 
   function onSubmit(data) {
 
-    if (role === "ADMIN") {
+    api.put(`/RendezVous/${rendezVousId}`, data)
+      .then((res) => {
+        console.log(res.data);
 
-      api
-        .put(`/RendezVous/${rendezVousId}`, data)
-        .then(() => {
-          alert("Rendez-vous modifié avec succès !");
-        })
-        .catch((err) => console.log(err));
+        alert("Rendez-vous modifié avec succès.");
 
-    } else {
+        reset({
+          dateRendezVous: "",
+          statut: "",
+          patientId: "",
+          medecinId: "",
+        });
 
-      api
-        .put("/RendezVous/me", data)
-        .then(() => {
-          alert("Rendez-vous modifié avec succès !");
-        })
-        .catch((err) => console.log(err));
-
-    }
-
+        setRendezVousId("");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   return (
+   <div className="page">
 
-    <div className="page">
+   <h1>Modifier un Rendez-vous</h1>
 
-      <h1>Modifier un Rendez-vous</h1>
-
-      <form
-        className="form"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+    <form className="form" onSubmit={handleSubmit(onSubmit)}>
 
         <div className="form-group">
-
-          <label>Date</label>
-
-          <input
-            type="datetime-local"
-            {...register("dateRendezVous")}
-          />
-
-          <p className="error">
-            {errors.dateRendezVous?.message}
-          </p>
-
+            <label>Date du rendez-vous</label>
+            <input
+                type="datetime-local"
+                {...register("dateRendezVous")}
+            />
+            <p className="error">{errors.dateRendezVous?.message}</p>
         </div>
 
         <div className="form-group">
+            <label>Statut</label>
 
-          <label>Statut</label>
+            <select {...register("statut")}>
+                <option value="">Choisir un statut</option>
+                <option value="PLANIFIE">Planifié</option>
+                <option value="CONFIRME">Confirmé</option>
+            </select>
 
-          <select {...register("statut")}>
-
-            <option value="PLANIFIE">
-              PLANIFIÉ
-            </option>
-
-            <option value="TERMINE">
-              TERMINÉ
-            </option>
-
-            <option value="ANNULE">
-              ANNULÉ
-            </option>
-
-          </select>
-
-          <p className="error">
-            {errors.statut?.message}
-          </p>
-
+            <p className="error">{errors.statut?.message}</p>
         </div>
 
-        <button
-          className="btn-primary"
-          type="submit"
-        >
-          Modifier
-        </button>
+        <div className="form-group">
+            <label>Patient ID</label>
+            <input
+                type="number"
+                {...register("patientId")}
+            />
+            <p className="error">{errors.patientId?.message}</p>
+        </div>
 
-      </form>
+        <div className="form-group">
+            <label>Médecin ID</label>
+            <input
+                type="number"
+                {...register("medecinId")}
+            />
+            <p className="error">{errors.medecinId?.message}</p>
+        </div>
 
-    </div>
+    <button
+    className="btn-primary"
+    type="submit"
+>
+    Modifier
+</button>
 
+    </form>
+
+</div>
   );
 }
 

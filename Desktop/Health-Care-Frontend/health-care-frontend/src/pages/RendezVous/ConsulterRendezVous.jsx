@@ -60,7 +60,11 @@ function ConsulterRendezVous() {
 
                 <div className="patient-profile">
 
-        
+                    <div className="patient-avatar">
+
+                        📅
+
+                    </div>
 
                     <div>
 

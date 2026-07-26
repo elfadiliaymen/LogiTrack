@@ -8,41 +8,21 @@ function ConsulterPatient() {
 
     const [patient, setPatient] = useState(null);
 
-    const role = localStorage.getItem("role");
-
     useEffect(() => {
 
-        if (role === "ADMIN") {
+        api.get(`/patient/${patientId}/consulter`)
+            .then((res) => {
 
-            api.get(`/patient/${patientId}/consulter`)
-                .then((res) => {
+                setPatient(res.data);
 
-                    setPatient(res.data);
+            })
+            .catch((error) => {
 
-                })
-                .catch((err) => {
+                console.log(error);
 
-                    console.log(err);
+            });
 
-                });
-
-        } else {
-
-            api.get("/patient/me")
-                .then((res) => {
-
-                    setPatient(res.data);
-
-                })
-                .catch((err) => {
-
-                    console.log(err);
-
-                });
-
-        }
-
-    }, [patientId, role]);
+    }, [patientId]);
 
     if (!patient) {
 
@@ -68,17 +48,17 @@ function ConsulterPatient() {
 
                     <div>
 
-                        <h1>Profil Patient</h1>
+                        <h1>Fiche Patient</h1>
 
-                        <p>Informations personnelles</p>
+                        <p>
+                            Consultation des informations du patient
+                        </p>
 
                     </div>
 
                     <Link
-                        to={role === "ADMIN"
-                            ? `/update-patient/${patient.id}`
-                            : "/update-patient"}
                         className="btn-edit"
+                        to={`/update-patient/${patient.id}`}
                     >
                         Modifier
                     </Link>
@@ -87,19 +67,26 @@ function ConsulterPatient() {
 
                 <div className="patient-profile">
 
-                    <div>
+                    <div className="patient-avatar">
+
+                        {patient.prenom?.charAt(0)}
+                        {patient.nom?.charAt(0)}
+
+                    </div>
+
+                    <div className="patient-title">
 
                         <h2>
 
-                            {patient.nom} {patient.prenom}
+                            {patient.prenom} {patient.nom}
 
                         </h2>
 
-                        <p>
+                        <span>
 
-                            {patient.email}
+                            Patient N° {patient.id}
 
-                        </p>
+                        </span>
 
                     </div>
 
@@ -160,14 +147,6 @@ function ConsulterPatient() {
                         <span>Date de naissance</span>
 
                         <strong>{patient.dateNaissance}</strong>
-
-                    </div>
-
-                    <div className="info-box">
-
-                        <span>Rôle</span>
-
-                        <strong>{patient.role}</strong>
 
                     </div>
 

@@ -1,4 +1,5 @@
 import api from "../../api/api";
+import { useState } from "react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,23 +7,27 @@ import * as yup from "yup";
 import { useParams } from "react-router-dom";
 
 const schema = yup.object({
-  nom: yup
-    .string()
-    .required("Le nom est obligatoire"),
+  nom: yup.string().required("Le nom est obligatoire"),
 
-  prenom: yup
-    .string()
-    .required("Le prénom est obligatoire"),
+  prenom: yup.string().required("Le prénom est obligatoire"),
 
   email: yup
     .string()
     .email("Email invalide")
     .required("L'email est obligatoire"),
 
+  username: yup
+    .string()
+    .required("Le username est obligatoire"),
+
+  password: yup
+    .string()
+    .min(6, "Minimum 6 caractères")
+    .required("Le mot de passe est obligatoire"),
+
   telephone: yup
     .string()
-    .required("Le téléphone est obligatoire")
-    .matches(/^[0-9]+$/, "Le téléphone doit contenir uniquement des chiffres"),
+    .required("Le téléphone est obligatoire"),
 
   dateNaissance: yup
     .string()
@@ -30,132 +35,137 @@ const schema = yup.object({
 });
 
 function ModifiePatient() {
-
-  const { patientId } = useParams();
-
-  const role = localStorage.getItem("role");
+  const {patientId} = useParams();
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      nom: "",
-      prenom: "",
-      email: "",
-      telephone: "",
-      dateNaissance: "",
-    },
   });
 
+  function getPatient() {
+    api.get(`/patient/${patientId}/consulter`)
+      .then((res) => {
+
+        const patient = res.data;
+
+        reset({
+          ...patient,
+          dateNaissance: patient?.dateNaissance
+            ? String(patient.dateNaissance).split("T")[0]
+            : "",
+        });
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   useEffect(() => {
-
-    if (role === "ADMIN") {
-
-      api
-        .get(`/patient/${patientId}/consulter`)
-        .then((res) => {
-          reset(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-    } else {
-
-      api
-        .get("/patient/me")
-        .then((res) => {
-          reset(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
+    if (patientId) {
+      getPatient();
     }
-
-  }, [patientId, role, reset]);
+  }, [patientId]);
 
   function onSubmit(data) {
 
-    if (role === "ADMIN") {
+    api.put(`/patient/${patientId}`, data)
+      .then((res) => {
 
-      api
-        .put(`/patient/${patientId}`, data)
-        .then(() => {
-          alert("Patient modifié avec succès !");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        console.log(res.data);
 
-    } else {
+        alert("Patient modifié avec succès");
 
-      api
-        .put("/patient/me", data)
-        .then(() => {
-          alert("Profil modifié avec succès !");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-    }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
   }
 
   return (
-
     <div className="page">
 
-      <h1>Modifier un Patient</h1>
+  <h1>Modifier un Patient</h1>
 
-      <form className="form" onSubmit={handleSubmit(onSubmit)}>
+    <form className="form" onSubmit={handleSubmit(onSubmit)}>
 
         <div className="form-group">
-          <label>Nom</label>
-          <input type="text" {...register("nom")} />
-          <p className="error">{errors.nom?.message}</p>
+            <label>Nom</label>
+            <input
+                type="text"
+                {...register("nom")}
+            />
+            <p className="error">{errors.nom?.message}</p>
         </div>
 
         <div className="form-group">
-          <label>Prénom</label>
-          <input type="text" {...register("prenom")} />
-          <p className="error">{errors.prenom?.message}</p>
+            <label>Prénom</label>
+            <input
+                type="text"
+                {...register("prenom")}
+            />
+            <p className="error">{errors.prenom?.message}</p>
         </div>
 
         <div className="form-group">
-          <label>Email</label>
-          <input type="email" {...register("email")} />
-          <p className="error">{errors.email?.message}</p>
+            <label>Email</label>
+            <input
+                type="email"
+                {...register("email")}
+            />
+            <p className="error">{errors.email?.message}</p>
         </div>
 
         <div className="form-group">
-          <label>Téléphone</label>
-          <input type="text" {...register("telephone")} />
-          <p className="error">{errors.telephone?.message}</p>
+            <label>Username</label>
+            <input
+                type="text"
+                {...register("username")}
+            />
+            <p className="error">{errors.username?.message}</p>
         </div>
 
         <div className="form-group">
-          <label>Date de naissance</label>
-          <input type="date" {...register("dateNaissance")} />
-          <p className="error">{errors.dateNaissance?.message}</p>
+            <label>Password</label>
+            <input
+                type="password"
+                {...register("password")}
+            />
+            <p className="error">{errors.password?.message}</p>
         </div>
 
-        <button
-          className="btn-primary"
-          type="submit"
-        >
-          Modifier
-        </button>
+        <div className="form-group">
+            <label>Téléphone</label>
+            <input
+                type="text"
+                {...register("telephone")}
+            />
+            <p className="error">{errors.telephone?.message}</p>
+        </div>
 
-      </form>
+        <div className="form-group">
+            <label>Date de naissance</label>
+            <input
+                type="date"
+                {...register("dateNaissance")}
+            />
+            <p className="error">{errors.dateNaissance?.message}</p>
+        </div>
 
-    </div>
+      <button className="btn-primary">
 
+    Modifier
+
+</button>
+
+    </form>
+
+</div>
   );
 }
 

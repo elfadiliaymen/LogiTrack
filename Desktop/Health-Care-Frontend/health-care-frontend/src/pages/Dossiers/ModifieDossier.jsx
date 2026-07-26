@@ -13,13 +13,21 @@ const schema = yup.object({
   observations: yup
     .string()
     .required("Les observations sont obligatoires"),
+
+  dateCreation: yup
+    .string()
+    .required("La date de création est obligatoire"),
+
+  patientId: yup
+    .number()
+    .typeError("L'id du patient doit être un nombre")
+    .positive("L'id doit être supérieur à 0")
+    .integer("L'id doit être un entier")
+    .required("L'id du patient est obligatoire"),
 });
 
 function ModifieDossier() {
-
   const { dossierId } = useParams();
-
-  const role = localStorage.getItem("role");
 
   const {
     register,
@@ -31,141 +39,99 @@ function ModifieDossier() {
     defaultValues: {
       diagnostic: "",
       observations: "",
+      dateCreation: "",
+      patientId: "",
     },
   });
 
+  function getDossier() {
+
+    api.get(`/DossierMedical/${dossierId}/consulter`)
+      .then((res) => {
+        reset({
+          diagnostic: res.data.diagnostic,
+          observations: res.data.observations,
+          dateCreation: res.data.dateCreation,
+          patientId: res.data.patientId,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  }
+
   useEffect(() => {
-
-    if (role === "ADMIN") {
-
-      api
-        .get(`/DossierMedical/${dossierId}/consulter`)
-        .then((res) => {
-
-          reset({
-            diagnostic: res.data.diagnostic,
-            observations: res.data.observations,
-          });
-
-        })
-        .catch((err) => {
-
-          console.log(err);
-
-        });
-
-    } else {
-
-      api
-        .get("/DossierMedical/me")
-        .then((res) => {
-
-          reset({
-            diagnostic: res.data.diagnostic,
-            observations: res.data.observations,
-          });
-
-        })
-        .catch((err) => {
-
-          console.log(err);
-
-        });
-
+    if (dossierId) {
+      getDossier();
     }
-
-  }, [dossierId, role, reset]);
+  }, [dossierId]);
 
   function onSubmit(data) {
 
-    if (role === "ADMIN") {
-
-      api
-        .put(`/DossierMedical/${dossierId}`, data)
-        .then(() => {
-
-          alert("Dossier modifié avec succès !");
-
-        })
-        .catch((err) => {
-
-          console.log(err);
-
-        });
-
-    } else {
-
-      api
-        .put("/DossierMedical/me", data)
-        .then(() => {
-
-          alert("Dossier modifié avec succès !");
-
-        })
-        .catch((err) => {
-
-          console.log(err);
-
-        });
-
-    }
+    api.put(`/DossierMedical/${dossierId}`, data)
+      .then((res) => {
+        console.log(res.data);
+        alert("Dossier modifié avec succès !");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
   }
 
   return (
+   <div className="page">
+<h1>Modifier un Dossier Médical</h1>
 
-    <div className="page">
-
-      <h1>Modifier le Dossier Médical</h1>
-
-      <form
-        className="form"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+    <form className="form" onSubmit={handleSubmit(onSubmit)}>
 
         <div className="form-group">
-
-          <label>Diagnostic</label>
-
-          <input
-            type="text"
-            {...register("diagnostic")}
-          />
-
-          <p className="error">
-            {errors.diagnostic?.message}
-          </p>
-
+            <label>Diagnostic</label>
+            <input
+                type="text"
+                {...register("diagnostic")}
+            />
+            <p className="error">{errors.diagnostic?.message}</p>
         </div>
 
         <div className="form-group">
-
-          <label>Observations</label>
-
-          <textarea
-            rows="6"
-            {...register("observations")}
-          />
-
-          <p className="error">
-            {errors.observations?.message}
-          </p>
-
+            <label>Observations</label>
+            <textarea
+                {...register("observations")}
+            />
+            <p className="error">{errors.observations?.message}</p>
         </div>
 
-        <button
-          className="btn-primary"
-          type="submit"
-        >
-          Modifier
-        </button>
+        <div className="form-group">
+            <label>Date de création</label>
+            <input
+                type="datetime-local"
+                {...register("dateCreation")}
+            />
+            <p className="error">{errors.dateCreation?.message}</p>
+        </div>
 
-      </form>
+        <div className="form-group">
+            <label>Patient ID</label>
+            <input
+                type="number"
+                {...register("patientId")}
+            />
+            <p className="error">{errors.patientId?.message}</p>
+        </div>
 
-    </div>
+       <button
+    className="btn-primary"
+    type="submit"
+>
+    Modifier
+</button>
 
+    </form>
+
+</div>
   );
-
 }
 
 export default ModifieDossier;

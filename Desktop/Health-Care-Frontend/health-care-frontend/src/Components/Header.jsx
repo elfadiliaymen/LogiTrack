@@ -1,76 +1,26 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Header() {
+  return (
+    <header className="header">
 
-    const navigate = useNavigate();
+      <div className="logo">
+        <h1>MediFlow</h1>
+        <span>Clinic Management System</span>
+      </div>
 
-    const role = localStorage.getItem("role");
+      <nav className="header-nav">
 
-    function logout() {
+        <Link to="/">Accueil</Link>
 
-        localStorage.clear();
+        <Link to="/dashboard">
+          Dashboard
+        </Link>
 
-        navigate("/login");
+      </nav>
 
-    }
-
-    return (
-
-        <header className="header">
-
-            <div className="logo">
-
-                <h1>MediFlow</h1>
-
-                <span>Clinic Management System</span>
-
-            </div>
-
-            <nav className="header-nav">
-
-                <Link to="/dashboard">
-                    Dashboard
-                </Link>
-
-                {(role === "PATIENT" || role === "MEDECIN") && (
-                    <Link to="/my-profile">
-                        Mon Profil
-                    </Link>
-                )}
-
-                {role === "ADMIN" && (
-                    <>
-                        <Link to="/patients-actions">
-                            Patients
-                        </Link>
-
-                        <Link to="/medecins-actions">
-                            Médecins
-                        </Link>
-                    </>
-                )}
-
-                <Link to="/dossiers-actions">
-                    Dossiers
-                </Link>
-
-                <Link to="/rendez-vous-actions">
-                    Rendez-vous
-                </Link>
-
-                <button
-                    className="btn-primary"
-                    onClick={logout}
-                >
-                    Déconnexion
-                </button>
-
-            </nav>
-
-        </header>
-
-    );
-
+    </header>
+  );
 }
 
 export default Header;

@@ -2,151 +2,79 @@ import { Link } from "react-router-dom";
 
 function Dashboard() {
 
-    const role = localStorage.getItem("role");
+  return (
 
-    return (
+    <main className="dashboard">
 
-        <main className="dashboard">
+      <div className="dashboard-header">
 
-            <div className="dashboard-header">
+        <h1>Tableau de Bord</h1>
 
-                <h1>Tableau de Bord</h1>
+        <p>
+          Sélectionnez un module pour gérer les données de la clinique.
+        </p>
 
-                <p>
-                    Bienvenue sur MediFlow.
-                </p>
+      </div>
 
-            </div>
+      <div className="dashboard-grid">
 
-            <div className="dashboard-grid">
+        <Link
+          className="dashboard-card"
+          to="/patients-actions"
+        >
 
-                {role === "ADMIN" && (
-                    <>
-                        <Link
-                            className="dashboard-card"
-                            to="/patients-actions"
-                        >
-                            <h2>Patients</h2>
+          <h2>Patients</h2>
 
-                            <p>
-                                Ajouter, modifier, consulter et supprimer les patients.
-                            </p>
-                        </Link>
+          <p>
+            Ajouter, modifier, consulter et supprimer les patients.
+          </p>
 
-                        <Link
-                            className="dashboard-card"
-                            to="/medecins-actions"
-                        >
-                            <h2>Médecins</h2>
+        </Link>
 
-                            <p>
-                                Gérer les médecins.
-                            </p>
-                        </Link>
+        <Link
+          className="dashboard-card"
+          to="/medecins-actions"
+        >
 
-                        <Link
-                            className="dashboard-card"
-                            to="/dossiers-actions"
-                        >
-                            <h2>Dossiers Médicaux</h2>
+          <h2>Médecins</h2>
 
-                            <p>
-                                Gérer tous les dossiers médicaux.
-                            </p>
-                        </Link>
+          <p>
+            Gérer les médecins et leurs informations.
+          </p>
 
-                        <Link
-                            className="dashboard-card"
-                            to="/rendez-vous-actions"
-                        >
-                            <h2>Rendez-vous</h2>
+        </Link>
 
-                            <p>
-                                Gérer tous les rendez-vous.
-                            </p>
-                        </Link>
-                    </>
-                )}
+        <Link
+          className="dashboard-card"
+          to="/dossiers-actions"
+        >
 
-                {role === "PATIENT" && (
-                    <>
-                        <Link
-                            className="dashboard-card"
-                            to="/my-profile"
-                        >
-                            <h2>Mon Profil</h2>
+          <h2>Dossiers Médicaux</h2>
 
-                            <p>
-                                Consulter et modifier vos informations.
-                            </p>
-                        </Link>
+          <p>
+            Consulter et gérer les dossiers médicaux.
+          </p>
 
-                        <Link
-                            className="dashboard-card"
-                            to="/dossiers-actions"
-                        >
-                            <h2>Mes Dossiers</h2>
+        </Link>
 
-                            <p>
-                                Consulter vos dossiers médicaux.
-                            </p>
-                        </Link>
+        <Link
+          className="dashboard-card"
+          to="/rendez-vous-actions"
+        >
 
-                        <Link
-                            className="dashboard-card"
-                            to="/rendez-vous-actions"
-                        >
-                            <h2>Mes Rendez-vous</h2>
+          <h2>Rendez-vous</h2>
 
-                            <p>
-                                Consulter vos rendez-vous.
-                            </p>
-                        </Link>
-                    </>
-                )}
+          <p>
+            Planifier, modifier et annuler les rendez-vous.
+          </p>
 
-                {role === "MEDECIN" && (
-                    <>
-                        <Link
-                            className="dashboard-card"
-                            to="/my-profile"
-                        >
-                            <h2>Mon Profil</h2>
+        </Link>
 
-                            <p>
-                                Consulter et modifier vos informations.
-                            </p>
-                        </Link>
+      </div>
 
-                        <Link
-                            className="dashboard-card"
-                            to="/dossiers-actions"
-                        >
-                            <h2>Dossiers Médicaux</h2>
+    </main>
 
-                            <p>
-                                Consulter les dossiers de vos patients.
-                            </p>
-                        </Link>
-
-                        <Link
-                            className="dashboard-card"
-                            to="/rendez-vous-actions"
-                        >
-                            <h2>Mes Rendez-vous</h2>
-
-                            <p>
-                                Consulter vos rendez-vous.
-                            </p>
-                        </Link>
-                    </>
-                )}
-
-            </div>
-
-        </main>
-
-    );
+  );
 
 }
 

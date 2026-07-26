@@ -5,55 +5,13 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token") ;
+  const token = "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MzAsInN1YiI6ImFkbWluOCIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc4NDg5NDIxNCwiZXhwIjoxNzg0OTMwMjE0fQ.HN4Z49ZsDVCA_Fo_YNmbsMB-uT-wI_so01iUs3aNfxHP8CaVnp9XsFZrcT-tbzZLi3GsQ6B0zYKiJx9J0G7xhw";
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
   return config;
-})
-
-
-api.interceptors.response.use(
-
-  (response) => response,
-
-  (error) => {
-
-    if (error.response) {
-
-      switch (error.response.status) {
-
-        case 400:
-          alert("Requête invalide.");
-          break;
-
-        case 401:
-          localStorage.removeItem("token");
-          alert("Session expirée. Veuillez vous reconnecter.");
-          window.location.href = "/login";
-          break;
-
-        case 403:
-          alert("Accès interdit.");
-          break;
-
-        case 404:
-          alert("Ressource introuvable.");
-          break;
-
-        case 500:
-          alert("Erreur interne du serveur.");
-          break;
-
-        default:
-          alert("Une erreur est survenue.");
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
+});
 
 export default api;

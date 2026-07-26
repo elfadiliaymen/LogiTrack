@@ -1,188 +1,155 @@
-import { useEffect, useState } from "react";
 import api from "../../api/api";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-function MedecinsList() {
 
-    const [medecins, setMedecins] = useState([]);
+function MedecinsList(){
 
-    const role = localStorage.getItem("role");
+
+    const [medecins , setMedecins] = useState([]);
+    const [hasDeleted , setHasDeleted] = useState(false);
 
     useEffect(() => {
+      api.get("/medecin").then(res =>{ 
+        setMedecins(res.data.content)
+        setHasDeleted(false)
+    })
+      .catch((error) => {
+          console.log(error);
+        });
 
-        if (role === "ADMIN") {
-
-            api.get("/medecin")
-                .then((res) => {
-                    setMedecins(res.data.content);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-
-        } else {
-
-            api.get("/medecin/me")
-                .then((res) => {
-
-                    if (Array.isArray(res.data)) {
-                        setMedecins(res.data);
-                    } else {
-                        setMedecins([res.data]);
-                    }
-
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-
-        }
-
-    }, [role]);
+    }, [hasDeleted == true])
 
     function handleDelete(medecinId) {
+      const confirmed = window.confirm("Voulez-vous supprimer ce médecin ?");
 
-        const confirmed = window.confirm("Voulez-vous supprimer ce médecin ?");
+      if (!confirmed) {
+        return;
+      }
 
-        if (!confirmed) return;
-
-        api.delete(`/medecin/${medecinId}`)
-            .then(() => {
-
-                setMedecins((current) =>
-                    current.filter((medecin) => medecin.id !== medecinId)
-                );
-
-            })
-            .catch((error) => {
-
-                console.log(error);
-                alert("La suppression a échoué.");
-
-            });
-
+      api.delete(`/medecin/${medecinId}`)
+        .then((res) => {
+        //   setMedecins((currentMedecins) =>
+        //     currentMedecins.filter((medecin) => medecin.id !== medecinId)
+        //   );
+        if(res.status == "200" ){
+ setHasDeleted(true);
+        }
+       
+        
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("La suppression a échoué.");
+        });
     }
 
-    return (
+   return (
 
-        <div className="page">
+<div className="page">
 
-            <div className="page-header">
+    <div className="page-header">
 
-                <h1>
+        <h1>Liste des Médecins</h1>
 
-                    {role === "ADMIN"
-                        ? "Liste des Médecins"
-                        : "Mon Profil Médecin"}
+        <Link
+            className="btn-primary"
+            to="/add-medecin"
+        >
+            + Ajouter
+        </Link>
 
-                </h1>
+    </div>
 
-                {role === "ADMIN" && (
+    <div className="table-container">
 
-                    <Link
-                        className="btn-primary"
-                        to="/add-medecin"
-                    >
-                        + Ajouter
-                    </Link>
+        <table className="table">
 
-                )}
+            <thead>
 
-            </div>
+                <tr>
 
-            <div className="table-container">
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Spécialité</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Actions</th>
 
-                <table className="table">
+                </tr>
 
-                    <thead>
+            </thead>
 
-                        <tr>
+            <tbody>
 
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>Spécialité</th>
-                            <th>Email</th>
-                            <th>Téléphone</th>
-                            <th>Actions</th>
+                {medecins.length > 0 ? (
+
+                    medecins.map((medecin) => (
+
+                        <tr key={medecin.id}>
+
+                            <td>{medecin.id}</td>
+
+                            <td>{medecin.nom}</td>
+
+                            <td>{medecin.specialite}</td>
+
+                            <td>{medecin.email}</td>
+
+                            <td>{medecin.telephone}</td>
+
+                            <td className="table-actions">
+
+                                <Link
+                                    className="btn-view"
+                                    to={`/consulter-medecin/${medecin.id}`}
+                                >
+                                    Consulter
+                                </Link>
+
+                                <Link
+                                    className="btn-edit"
+                                    to={`/update-medecin/${medecin.id}`}
+                                >
+                                    Modifier
+                                </Link>
+
+                                <button
+                                    className="btn-delete"
+                                    onClick={() => handleDelete(medecin.id)}
+                                >
+                                    Supprimer
+                                </button>
+
+                            </td>
 
                         </tr>
 
-                    </thead>
+                    ))
 
-                    <tbody>
+                ) : (
 
-                        {medecins.length > 0 ? (
+                    <tr>
 
-                            medecins.map((medecin) => (
+                        <td colSpan="6">
 
-                                <tr key={medecin.id}>
+                            Aucun médecin trouvé.
 
-                                    <td>{medecin.id}</td>
+                        </td>
 
-                                    <td>{medecin.nom}</td>
+                    </tr>
 
-                                    <td>{medecin.specialite}</td>
+                )}
 
-                                    <td>{medecin.email}</td>
+            </tbody>
 
-                                    <td>{medecin.telephone}</td>
+        </table>
 
-                                    <td className="table-actions">
+    </div>
 
-                                        <Link
-                                            className="btn-view"
-                                            to={`/consulter-medecin/${medecin.id}`}
-                                        >
-                                            Consulter
-                                        </Link>
+</div>
 
-                                        <Link
-                                            className="btn-edit"
-                                            to={`/update-medecin/${medecin.id}`}
-                                        >
-                                            Modifier
-                                        </Link>
-
-                                        {role === "ADMIN" && (
-
-                                            <button
-                                                className="btn-delete"
-                                                onClick={() => handleDelete(medecin.id)}
-                                            >
-                                                Supprimer
-                                            </button>
-
-                                        )}
-
-                                    </td>
-
-                                </tr>
-
-                            ))
-
-                        ) : (
-
-                            <tr>
-
-                                <td colSpan="6">
-
-                                    Aucun médecin trouvé.
-
-                                </td>
-
-                            </tr>
-
-                        )}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    );
+);
 
 }
 

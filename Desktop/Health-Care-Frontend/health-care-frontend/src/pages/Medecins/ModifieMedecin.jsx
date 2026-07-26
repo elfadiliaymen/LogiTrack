@@ -26,10 +26,7 @@ const schema = yup.object({
 });
 
 function ModifieMedecin() {
-
   const { medecinId } = useParams();
-
-  const role = localStorage.getItem("role");
 
   const {
     register,
@@ -46,169 +43,94 @@ function ModifieMedecin() {
     },
   });
 
+  function getMedecin() {
+    api
+      .get(`/medecin/${medecinId}/consulter`)
+      .then((res) => {
+        reset({
+          nom: res.data.nom,
+          specialite: res.data.specialite,
+          email: res.data.email,
+          telephone: res.data.telephone,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   useEffect(() => {
-
-    if (role === "ADMIN") {
-
-      api
-        .get(`/medecin/${medecinId}/consulter`)
-        .then((res) => {
-
-          reset({
-            nom: res.data.nom,
-            specialite: res.data.specialite,
-            email: res.data.email,
-            telephone: res.data.telephone,
-          });
-
-        })
-        .catch((err) => {
-
-          console.log(err);
-
-        });
-
-    } else {
-
-      api
-        .get("/medecin/me")
-        .then((res) => {
-
-          reset({
-            nom: res.data.nom,
-            specialite: res.data.specialite,
-            email: res.data.email,
-            telephone: res.data.telephone,
-          });
-
-        })
-        .catch((err) => {
-
-          console.log(err);
-
-        });
-
+    if (medecinId) {
+      getMedecin();
     }
-
-  }, [medecinId, role, reset]);
+  }, [medecinId]);
 
   function onSubmit(data) {
-
-    if (role === "ADMIN") {
-
-      api
-        .put(`/medecin/${medecinId}`, data)
-        .then(() => {
-
-          alert("Médecin modifié avec succès !");
-
-        })
-        .catch((err) => {
-
-          console.log(err);
-
-        });
-
-    } else {
-
-      api
-        .put("/medecin/me", data)
-        .then(() => {
-
-          alert("Profil modifié avec succès !");
-
-        })
-        .catch((err) => {
-
-          console.log(err);
-
-        });
-
-    }
-
+    api
+      .put(`/medecin/${medecinId}`, data)
+      .then((res) => {
+        console.log(res.data);
+        alert("Médecin modifié avec succès !");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   return (
-
     <div className="page">
 
-      <h1>Modifier un Médecin</h1>
+   <h1>Modifier un Médecin</h1>
 
-      <form className="form" onSubmit={handleSubmit(onSubmit)}>
+    <form className="form" onSubmit={handleSubmit(onSubmit)}>
 
         <div className="form-group">
-
-          <label>Nom</label>
-
-          <input
-            type="text"
-            {...register("nom")}
-          />
-
-          <p className="error">
-            {errors.nom?.message}
-          </p>
-
+            <label>Nom</label>
+            <input
+                type="text"
+                {...register("nom")}
+            />
+            <p className="error">{errors.nom?.message}</p>
         </div>
 
         <div className="form-group">
-
-          <label>Spécialité</label>
-
-          <input
-            type="text"
-            {...register("specialite")}
-          />
-
-          <p className="error">
-            {errors.specialite?.message}
-          </p>
-
+            <label>Spécialité</label>
+            <input
+                type="text"
+                {...register("specialite")}
+            />
+            <p className="error">{errors.specialite?.message}</p>
         </div>
 
         <div className="form-group">
-
-          <label>Email</label>
-
-          <input
-            type="email"
-            {...register("email")}
-          />
-
-          <p className="error">
-            {errors.email?.message}
-          </p>
-
+            <label>Email</label>
+            <input
+                type="email"
+                {...register("email")}
+            />
+            <p className="error">{errors.email?.message}</p>
         </div>
 
         <div className="form-group">
-
-          <label>Téléphone</label>
-
-          <input
-            type="text"
-            {...register("telephone")}
-          />
-
-          <p className="error">
-            {errors.telephone?.message}
-          </p>
-
+            <label>Téléphone</label>
+            <input
+                type="text"
+                {...register("telephone")}
+            />
+            <p className="error">{errors.telephone?.message}</p>
         </div>
 
-        <button
-          className="btn-primary"
-          type="submit"
-        >
-          Modifier
-        </button>
+       <button
+    className="btn-primary"
+    type="submit"
+>
+    Modifier
+</button>
 
-      </form>
+    </form>
 
-    </div>
-
+</div>
   );
-
 }
 
 export default ModifieMedecin;

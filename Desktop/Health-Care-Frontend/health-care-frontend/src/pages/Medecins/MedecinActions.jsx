@@ -1,56 +1,36 @@
-import { Link, Navigate } from "react-router-dom";
+ import { Link } from "react-router-dom";
 
-function MedecinActions() {
 
-    const role = localStorage.getItem("role");
+function MedecinActions(){
 
-    if (role === "MEDECIN") {
-        return <Navigate to="/my-profile" replace />;
-    }
+   return (
+    <div className="page">
 
-    if (role === "PATIENT") {
-        return <Navigate to="/dashboard" replace />;
-    }
+        <h1>Gestion des Médecins</h1>
 
-    return (
+        <div className="cards-actions">
 
-        <div className="page">
+            <Link className="action-card" to="/medecins">
 
-            <h1>Gestion des Médecins</h1>
+                <h2>Liste des Médecins</h2>
 
-            <div className="cards-actions">
+                <p>Afficher tous les médecins.</p>
 
-                <Link
-                    className="action-card"
-                    to="/medecins"
-                >
+            </Link>
 
-                    <h2>Liste des Médecins</h2>
+            <Link className="action-card" to="/add-medecin">
 
-                    <p>
-                        Afficher tous les médecins.
-                    </p>
+                <h2>Ajouter un Médecin</h2>
 
-                </Link>
+                <p>Créer un nouveau médecin.</p>
 
-                <Link
-                    className="action-card"
-                    to="/add-medecin"
-                >
-
-                    <h2>Ajouter un Médecin</h2>
-
-                    <p>
-                        Créer un nouveau médecin.
-                    </p>
-
-                </Link>
-
-            </div>
+            </Link>
 
         </div>
 
-    );
+    </div>
+);
+
 
 }
 

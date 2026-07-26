@@ -5,57 +5,22 @@ import api from "../../api/api";
 function ConsulterMedecin() {
 
     const { medecinId } = useParams();
-
     const [medecin, setMedecin] = useState(null);
-
-    const role = localStorage.getItem("role");
 
     useEffect(() => {
 
-        if (role === "ADMIN") {
+        api.get(`/medecin/${medecinId}/consulter`)
+            .then((res) => setMedecin(res.data))
+            .catch((err) => console.log(err));
 
-            api.get(`/medecin/${medecinId}/consulter`)
-                .then((res) => {
-
-                    setMedecin(res.data);
-
-                })
-                .catch((err) => {
-
-                    console.log(err);
-
-                });
-
-        } else {
-
-            api.get("/medecin/me")
-                .then((res) => {
-
-                    setMedecin(res.data);
-
-                })
-                .catch((err) => {
-
-                    console.log(err);
-
-                });
-
-        }
-
-    }, [medecinId, role]);
+    }, [medecinId]);
 
     if (!medecin) {
-
         return (
-
             <div className="page">
-
                 <h2>Chargement...</h2>
-
             </div>
-
         );
-
     }
 
     return (
@@ -85,6 +50,7 @@ function ConsulterMedecin() {
 
                 </div>
 
+
                 <div className="patient-profile">
 
                     <div className="patient-avatar">
@@ -96,20 +62,17 @@ function ConsulterMedecin() {
                     <div>
 
                         <h2>
-
                             Dr. {medecin.nom}
-
                         </h2>
 
                         <p>
-
                             {medecin.specialite}
-
                         </p>
 
                     </div>
 
                 </div>
+
 
                 <div className="patient-infos">
 
@@ -121,6 +84,7 @@ function ConsulterMedecin() {
 
                     </div>
 
+
                     <div className="info-box">
 
                         <span>Nom</span>
@@ -128,6 +92,7 @@ function ConsulterMedecin() {
                         <strong>{medecin.nom}</strong>
 
                     </div>
+
 
                     <div className="info-box">
 
@@ -137,6 +102,7 @@ function ConsulterMedecin() {
 
                     </div>
 
+
                     <div className="info-box">
 
                         <span>Email</span>
@@ -144,6 +110,7 @@ function ConsulterMedecin() {
                         <strong>{medecin.email}</strong>
 
                     </div>
+
 
                     <div className="info-box">
 
@@ -153,6 +120,7 @@ function ConsulterMedecin() {
 
                     </div>
 
+
                     <div className="info-box">
 
                         <span>Téléphone</span>
@@ -160,6 +128,7 @@ function ConsulterMedecin() {
                         <strong>{medecin.telephone}</strong>
 
                     </div>
+
 
                     <div className="info-box">
 
