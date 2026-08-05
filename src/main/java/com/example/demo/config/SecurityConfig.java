@@ -46,8 +46,8 @@ public class SecurityConfig {
                                 "/error"
                         ).permitAll()
 
-                        // Everything else requires authentication
-                        .anyRequest().authenticated()
+                        // Only ADMIN, MANAGER and AGENT can access the API
+                        .anyRequest().hasAnyRole("ADMIN", "MANAGER", "AGENT")
                 )
 
                 // Execute JWT filter before UsernamePasswordAuthenticationFilter

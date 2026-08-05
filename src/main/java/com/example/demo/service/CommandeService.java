@@ -7,12 +7,18 @@ import com.example.demo.repository.CommandeRepository;
 import com.example.demo.repository.LigneCommandeRepository;
 import com.example.demo.repository.ProduitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CommandeService {
+
+    private static final Set<String> AGENT_ALLOWED_STATUS = Set.of(
+            "NOUVELLE", "EN_PREPARATION", "EXPEDIEE", "LIVREE"
+    );
 
     @Autowired
     private CommandeRepository commandeRepository;
@@ -35,7 +41,14 @@ public class CommandeService {
         return commandeRepository.save(commande);
     }
 
-    public Commande modifierStatut(Long id, String statut) {
+    public Commande modifierStatut(Long id, String statut, java.util.Collection<? extends GrantedAuthority> authorities) {
+        boolean isAgent = authorities.stream()
+                .anyMatch(a -> "ROLE_AGENT".equals(a.getAuthority()));
+
+        if (isAgent && !AGENT_ALLOWED_STATUS.contains(statut)) {
+            throw new RuntimeException("Statut non autorisé pour un agent : " + statut);
+        }
+
         Commande commande = consulter(id);
         commande.setStatut(statut);
         return commandeRepository.save(commande);

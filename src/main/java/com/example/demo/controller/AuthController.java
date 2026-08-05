@@ -1,78 +1,46 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.JwtUtils;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:63828")
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
+    @Autowired
+    private AuthService authService;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtils = jwtUtils;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            return ResponseEntity.badRequest().body("Username already exists!");
-        }
-
-        if (user.getRole() == null) {
-            user.setRole(User.Role.USER);
-        }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User saved = userRepository.save(user);
-
-        String token = jwtUtils.generateToken(
-                saved.getId(),
-                saved.getUsername(),
-                saved.getRole().name()
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(token);
+    public ResponseEntity<Map<String, Object>> register(@RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
-        User foundUser = userRepository.findByUsername(user.getUsername());
-
-        if (foundUser == null) {
-            return new ResponseEntity<>("User not found", HttpStatus.UNAUTHORIZED);
-        }
-
-        boolean passwordMatches = passwordEncoder.matches(user.getPassword(), foundUser.getPassword());
-
-        if (!passwordMatches) {
-            return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);
-        }
-
-        String token = jwtUtils.generateToken(
-                foundUser.getId(),
-                foundUser.getUsername(),
-                foundUser.getRole().name()
-        );
-        return ResponseEntity.ok(token);
+    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
-        return new ResponseEntity<>("User logged out successfully!", HttpStatus.OK);
+        return ResponseEntity.ok("Déconnexion réussie");
     }
 
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>("Hello! You are authenticated.", HttpStatus.OK);
+    @GetMapping("/me")
+    public ResponseEntity<User> me(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName());
+        return ResponseEntity.ok(user);
     }
 }
