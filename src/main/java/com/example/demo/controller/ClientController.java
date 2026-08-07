@@ -3,10 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.model.Client;
 import com.example.demo.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/clients")
@@ -17,8 +17,11 @@ public class ClientController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT')")
-    public List<Client> listerClients() {
-        return clientService.listerTout();
+    public Page<Client> listerClients(@RequestParam(required = false) String nom, Pageable pageable) {
+        if (nom != null && !nom.isBlank()) {
+            return clientService.rechercherParNom(nom, pageable);
+        }
+        return clientService.listerTout(pageable);
     }
 
     @PostMapping

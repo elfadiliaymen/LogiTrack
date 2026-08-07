@@ -3,10 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.model.Produit;
 import com.example.demo.service.ProduitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -17,8 +17,12 @@ public class ProduitController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT')")
-    public List<Produit> listerProduits() {
-        return produitService.listerTout();
+    public Page<Produit> listerProduits(@RequestParam(required = false) String categorie,
+                                        @RequestParam(required = false) Double minPrix,
+                                        @RequestParam(required = false) Double maxPrix,
+                                        @RequestParam(required = false) Boolean stockFaible,
+                                        Pageable pageable) {
+        return produitService.rechercher(categorie, minPrix, maxPrix, stockFaible, pageable);
     }
 
     @PostMapping
@@ -42,25 +46,14 @@ public class ProduitController {
 
     @GetMapping("/category/{category}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT')")
-    public List<Produit> parCategorie(@PathVariable String category) {
-        return produitService.parCategorie(category);
+    public Page<Produit> parCategorie(@PathVariable String category, Pageable pageable) {
+        return produitService.parCategorie(category, pageable);
     }
 
     @GetMapping("/price/{price}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AGENT')")
-    public List<Produit> parPrixInferieur(@PathVariable double price) {
-        return produitService.parPrixInferieur(price);
+    public Page<Produit> parPrixInferieur(@PathVariable double price, Pageable pageable) {
+        return produitService.parPrixInferieur(price, pageable);
     }
 
-    @GetMapping("/low-stock")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<Produit> stockFaible() {
-        return produitService.stockFaible();
-    }
-
-    @GetMapping("/top-product")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public Produit lePlusCommande() {
-        return produitService.lePlusCommande();
-    }
 }

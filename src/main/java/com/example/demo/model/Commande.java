@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -18,7 +17,6 @@ public class Commande {
     private String statut;
     @ManyToOne
     @JoinColumn(name = "client_id")
-    @JsonIgnore
     private Client client;
 
     @OneToMany(mappedBy = "commande" , cascade = CascadeType.ALL)

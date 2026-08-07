@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class Client {
      private String telephone;
      private String ville;
      @OneToMany(mappedBy = "client" , cascade = CascadeType.ALL)
+     @JsonIgnore
      private List<Commande> commandes;
 
     public Client() {

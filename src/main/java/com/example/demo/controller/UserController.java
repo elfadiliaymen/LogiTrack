@@ -3,10 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -17,8 +17,8 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<User> listerUtilisateurs() {
-        return userService.listerTout();
+    public Page<User> listerUtilisateurs(Pageable pageable) {
+        return userService.listerTout(pageable);
     }
 
     @GetMapping("/{id}")
