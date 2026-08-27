@@ -32,6 +32,10 @@ services:
       SPRING_DATASOURCE_USERNAME: "root"
       SPRING_DATASOURCE_PASSWORD: "1234"
       SPRING_JPA_HIBERNATE_DDL_AUTO: "validate"
+      SPRING_PROFILES_ACTIVE: "logging"
+      LOG_DIR: "/logs"
+    volumes:
+      - logs:/logs
     restart: unless-stopped
 
   prometheus:
@@ -44,6 +48,28 @@ services:
     volumes:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:3.2.2
+    container_name: logitrack-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./docker/loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:3.2.2
+    container_name: logitrack-promtail
+    depends_on:
+      - loki
+    volumes:
+      - ./docker/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - logs:/logs:ro
+    command: -config.file=/etc/promtail/config.yml
     restart: unless-stopped
 
   grafana:
@@ -66,3 +92,5 @@ volumes:
   mysql-data:
   prometheus-data:
   grafana-data:
+  logs:
+  loki-data:

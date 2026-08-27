@@ -1,0 +1,25 @@
+# Configuration Promtail : recupere les fichiers de logs LogiTrack et les pousse vers Loki
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: logitrack-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: logitrack-logs
+          __path__: /logs/*.log
+    pipeline_stages:
+      # Extrait le niveau de log en label (recherches LogQL possibles)
+      - regex:
+          expression: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} (?P<level>\w+)'
+      - labels:
+          level: ""
