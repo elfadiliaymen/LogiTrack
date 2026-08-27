@@ -1,0 +1,14 @@
+# Provisioning des dashboards Grafana
+apiVersion: 1
+
+providers:
+  - name: "LogiTrack"
+    orgId: 1
+    folder: "LogiTrack"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards
+      foldersFromFilesStructure: false
