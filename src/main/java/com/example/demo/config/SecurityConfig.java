@@ -46,7 +46,11 @@ public class SecurityConfig {
                                 "/error",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/actuator/health",
+                                "/actuator/info",
+                                "/actuator/metrics",
+                                "/actuator/prometheus"
                         ).permitAll()
 
                         // Only ADMIN, MANAGER and AGENT can access the API
