@@ -1,0 +1,16 @@
+# Configuration Alertmanager - LogiTrack
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: "teams-logitrack"
+  group_by: ["alertname", "job"]
+  group_wait: 5s
+  group_interval: 30s
+  repeat_interval: 4h
+
+receivers:
+  - name: "teams-logitrack"
+    webhook_configs:
+      - url: "http://alert-display:9999/alert"
+        send_resolved: true
