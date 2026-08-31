@@ -60,18 +60,7 @@ services:
       - "9093:9093"
     volumes:
       - ./docker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
-      - alertmanager-data:/alertmanager
     command: --config.file=/etc/alertmanager/alertmanager.yml
-    restart: unless-stopped
-
-  alert-display:
-    image: python:3.12-alpine
-    container_name: logitrack-alert-display
-    depends_on:
-      - alertmanager
-    volumes:
-      - ./docker/alert-display/alert-display.py:/app/alert-display.py:ro
-    command: python /app/alert-display.py
     restart: unless-stopped
 
   loki:
@@ -118,4 +107,3 @@ volumes:
   grafana-data:
   logs:
   loki-data:
-  alertmanager-data:

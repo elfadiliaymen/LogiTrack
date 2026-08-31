@@ -1,20 +1,16 @@
-# Configuration Prometheus - Carte 2
 global:
   scrape_interval: 10s
   evaluation_interval: 15s
 
-# Regles d'alerte (evaluees a chaque evaluation_interval)
 rule_files:
   - /etc/prometheus/alert-rules.yml
 
-# Alertmanager de destination
 alerting:
   alertmanagers:
     - static_configs:
         - targets: ["alertmanager:9093"]
 
 scrape_configs:
-  # L'API Spring Boot expose ses metriques via Actuator
   - job_name: "logitrack-api"
     metrics_path: "/actuator/prometheus"
     scrape_interval: 10s

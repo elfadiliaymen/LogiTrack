@@ -1,47 +1,38 @@
-# Regles d'alerte Prometheus - LogiTrack
 groups:
   - name: logitrack-alerts
     rules:
-      # 1) L'API est injoignable
       - alert: LogiTrackApiDown
         expr: up{job="logitrack-api"} == 0
         for: 1m
         labels:
           severity: critical
-          team: platform
         annotations:
-          summary: "L'API LogiTrack est inaccessible"
-          description: "Prometheus ne peut pas joindre LogiTrack (instance {{ $labels.instance }}) depuis plus d'1 minute."
+          summary: "LogiTrack API is down"
+          description: "Prometheus cannot reach LogiTrack API for more than 1 minute."
 
-      # 2) Taux d'erreurs 5xx trop eleve
       - alert: LogiTrackHighErrorRate
         expr: sum(rate(http_server_requests_seconds_count{job="logitrack-api",status=~"5.."}[5m])) > 0.5
         for: 5m
         labels:
           severity: warning
-          team: platform
         annotations:
-          summary: "Taux d'erreurs 5xx eleve"
-          description: "Le taux d'erreurs 5xx de LogiTrack depasse 0.5/s en moyenne sur 5 minutes."
+          summary: "High 5xx error rate"
+          description: "LogiTrack 5xx error rate exceeds 0.5/s over 5 minutes."
 
-      # 3) Latence p95 trop elevee
       - alert: LogiTrackHighLatency
         expr: histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job="logitrack-api"}[5m])) by (le)) > 2
         for: 5m
         labels:
           severity: warning
-          team: platform
         annotations:
-          summary: "Latence p95 elevee"
-          description: "Le temps de reponse p95 de LogiTrack depasse 2 secondes depuis 5 minutes."
+          summary: "High response time (p95)"
+          description: "LogiTrack p95 response time exceeds 2 seconds for 5 minutes."
 
-      # 4) Memoire heap JVM presque pleine
       - alert: LogiTrackHighHeapUsage
         expr: sum(jvm_memory_used_bytes{job="logitrack-api",area="heap"}) / sum(jvm_memory_max_bytes{job="logitrack-api",area="heap"}) > 0.85
         for: 5m
         labels:
           severity: warning
-          team: platform
         annotations:
-          summary: "Memoire heap JVM elevee"
-          description: "La heap JVM de LogiTrack depasse 85% de sa capacite maximale depuis 5 minutes."
+          summary: "High JVM heap usage"
+          description: "LogiTrack JVM heap usage exceeds 85% for 5 minutes."
