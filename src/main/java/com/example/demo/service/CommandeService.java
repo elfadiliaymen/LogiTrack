@@ -1,8 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.client.NotificationClient;
+import com.example.demo.dto.NotificationRequest;
 import com.example.demo.model.Client;
 import com.example.demo.model.Commande;
 import com.example.demo.model.LigneCommande;
+import com.example.demo.model.NotificationType;
 import com.example.demo.model.Produit;
 import com.example.demo.repository.ClientRepository;
 import com.example.demo.repository.CommandeRepository;
@@ -35,6 +38,9 @@ public class CommandeService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private NotificationClient notificationClient;
+
     public Page<Commande> listerTout(Pageable pageable) {
         return commandeRepository.findAll(pageable);
     }
@@ -44,7 +50,19 @@ public class CommandeService {
     }
 
     public Commande creer(Commande commande) {
-        return commandeRepository.save(commande);
+        Commande saved = commandeRepository.save(commande);
+        notifier(saved, NotificationType.ORDER_CREATED, "Commande #" + saved.getId() + " créée");
+        return saved;
+    }
+
+    private void notifier(Commande commande, NotificationType type, String message) {
+        try {
+            NotificationRequest request = new NotificationRequest(message, type, commande.getId());
+            notificationClient.createNotification(request);
+        } catch (Exception e) {
+            // Si le service de notification est indisponible, on logue mais on ne fait pas échouer l'opération
+            System.err.println("Erreur notification (" + type + ") pour commande #" + commande.getId() + ": " + e.getMessage());
+        }
     }
 
     public Commande modifierStatut(Long id, String statut, java.util.Collection<? extends GrantedAuthority> authorities) {
