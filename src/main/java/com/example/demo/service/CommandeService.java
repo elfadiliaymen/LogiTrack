@@ -75,7 +75,13 @@ public class CommandeService {
 
         Commande commande = consulter(id);
         commande.setStatut(statut);
-        return commandeRepository.save(commande);
+        Commande saved = commandeRepository.save(commande);
+
+        if ("EXPEDIEE".equals(statut)) {
+            notifier(saved, NotificationType.ORDER_SHIPPED, "Commande #" + saved.getId() + " expédiée");
+        }
+
+        return saved;
     }
 
     public Commande modifierCommande(Long id, Commande updates, java.util.Collection<? extends GrantedAuthority> authorities) {
