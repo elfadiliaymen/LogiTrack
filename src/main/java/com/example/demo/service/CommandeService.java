@@ -66,6 +66,8 @@ public class CommandeService {
     }
 
     public Commande modifierStatut(Long id, String statut, java.util.Collection<? extends GrantedAuthority> authorities) {
+        statut = statut.replace("\"", "").trim();
+
         boolean isAgent = authorities.stream()
                 .anyMatch(a -> "ROLE_AGENT".equals(a.getAuthority()));
 
@@ -130,9 +132,17 @@ public class CommandeService {
         Produit produit = produitRepository.findById(ligneCommande.getProduit().getId())
                 .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
 
+        if (ligneCommande.getQuantite() > produit.getQuantiteStock()) {
+            throw new RuntimeException("Stock insuffisant pour le produit : " + produit.getNom());
+        }
+
         ligneCommande.setCommande(commande);
         ligneCommande.setProduit(produit);
+        LigneCommande saved = ligneCommandeRepository.save(ligneCommande);
 
-        return ligneCommandeRepository.save(ligneCommande);
+        produit.setQuantiteStock(produit.getQuantiteStock() - ligneCommande.getQuantite());
+        produitRepository.save(produit);
+
+        return saved;
     }
 }
