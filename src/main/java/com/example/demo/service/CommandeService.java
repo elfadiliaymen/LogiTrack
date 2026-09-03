@@ -79,6 +79,8 @@ public class CommandeService {
 
         if ("EXPEDIEE".equals(statut)) {
             notifier(saved, NotificationType.ORDER_SHIPPED, "Commande #" + saved.getId() + " expédiée");
+        } else if ("LIVREE".equals(statut)) {
+            notifier(saved, NotificationType.ORDER_DELIVERED, "Commande #" + saved.getId() + " livrée");
         }
 
         return saved;
