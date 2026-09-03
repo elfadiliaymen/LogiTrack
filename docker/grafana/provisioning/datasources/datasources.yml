@@ -1,4 +1,3 @@
-# Provisioning de la datasource Prometheus pour Grafana
 apiVersion: 1
 
 datasources:

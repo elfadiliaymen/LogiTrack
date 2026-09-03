@@ -1,4 +1,3 @@
-# Configuration Loki (mode single-binary, stockage fichiers)
 auth_enabled: false
 
 server:

@@ -1,4 +1,3 @@
-# Provisioning des dashboards Grafana
 apiVersion: 1
 
 providers:
